@@ -17,7 +17,7 @@ export default function PublicArtifacts() {
         .then(setFields)
         .catch(err => console.error('FIELD LOAD ERROR:', err));
     }
-  }, [setArtifacts, setFields, fields.length]);
+  }, []);
 
   const publicArtifacts = artifacts.slice(0, 6);
 

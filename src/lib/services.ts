@@ -189,6 +189,3 @@ export async function getMembershipsByField(fieldId: string) {
   return data;
 }
 
-export async function fetchFields() {
-  return services.listFields();
-}

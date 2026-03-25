@@ -26,7 +26,7 @@ const AppLayout: React.FC = () => {
     getFields()
       .then(setFields)
       .catch(err => console.error('INIT FIELD LOAD ERROR:', err));
-  }, [setFields]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
