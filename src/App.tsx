@@ -19,6 +19,7 @@ import Threads from "./pages/Threads";
 import ThreadView from "./pages/ThreadView";
 import Classify from "./pages/Classify";
 import Join from "./pages/Join";
+import ProposalReview from "./pages/ProposalReview";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -118,6 +119,7 @@ function AppShell() {
             <Route path="/thread/:id" element={<ThreadView />} />
             <Route path="/classify" element={<Classify />} />
             <Route path="/join" element={<Join />} />
+            <Route path="/proposals" element={<ProposalReview />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </HashRouter>
