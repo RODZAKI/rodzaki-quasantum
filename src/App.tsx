@@ -17,7 +17,8 @@ import NotFound from "./pages/NotFound";
 import MasterIndex from "./pages/MasterIndex";
 import Threads from "./pages/Threads";
 import ThreadView from "./pages/ThreadView";
-
+import Classify from "./pages/Classify";
+import Join from "./pages/Join";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -105,7 +106,7 @@ function AppShell() {
   return (
     <ThemeProvider defaultTheme="light">
       <TooltipProvider>
-        
+
         <Sonner />
 
         <HashRouter>
@@ -115,6 +116,8 @@ function AppShell() {
             <Route path="/master-index" element={<MasterIndex />} />
             <Route path="/threads" element={<Threads />} />
             <Route path="/thread/:id" element={<ThreadView />} />
+            <Route path="/classify" element={<Classify />} />
+            <Route path="/join" element={<Join />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </HashRouter>
