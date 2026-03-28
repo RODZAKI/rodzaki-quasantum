@@ -20,6 +20,9 @@ import ThreadView from "./pages/ThreadView";
 import Classify from "./pages/Classify";
 import Join from "./pages/Join";
 import ProposalReview from "./pages/ProposalReview";
+import Supersede from "./pages/Supersede";
+import Observe from "./pages/Observe";
+import StewardNav from "./components/StewardNav";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -112,6 +115,7 @@ function AppShell() {
 
         <HashRouter>
           <AuthStatusBar />
+          <StewardNav />
           <Routes>
             <Route path="/" element={<ThreadQueryHandler />} />
             <Route path="/master-index" element={<MasterIndex />} />
@@ -120,6 +124,8 @@ function AppShell() {
             <Route path="/classify" element={<Classify />} />
             <Route path="/join" element={<Join />} />
             <Route path="/proposals" element={<ProposalReview />} />
+            <Route path="/supersede" element={<Supersede />} />
+            <Route path="/observe" element={<Observe />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </HashRouter>
