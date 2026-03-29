@@ -1,7 +1,8 @@
 import React from 'react';
 import { useStore } from '../lib/store';
+import { supabase } from '../lib/supabase';
 import type { Artifact } from '../lib/types';
-import { FileText, BookOpen, Scroll, BookMarked, Library, Award, GitBranch, Eye, Lock, Globe, User } from 'lucide-react';
+import { FileText, BookOpen, Scroll, BookMarked, Library, Award, GitBranch, Eye, Lock, Globe, User, Trash2 } from 'lucide-react';
 
 const typeIcons: Record<string, React.ElementType> = {
   NOTE: FileText,
@@ -28,16 +29,36 @@ const visIcons: Record<string, React.ElementType> = {
 interface Props {
   artifact: Artifact;
   compact?: boolean;
+  onDeleted?: (id: string) => void;
 }
 
-export default function ArtifactCard({ artifact, compact }: Props) {
-  const { setView, selectedFieldId } = useStore();
+export default function ArtifactCard({ artifact, compact, onDeleted }: Props) {
+  const { setView, currentUser } = useStore();
 
   const TypeIcon = typeIcons[artifact.type] || FileText;
   const VisIcon = visIcons[artifact.visibility] || Eye;
 
   const author = artifact.author_name || 'Unknown';
   const preview = artifact.content ? artifact.content.slice(0, 150) : '';
+
+  const canDelete = currentUser && artifact.state === 'DRAFT';
+
+  async function handleDelete(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (!window.confirm(`Delete "${artifact.title}"? This cannot be undone.`)) return;
+
+    const { error } = await supabase
+      .from('artifacts')
+      .delete()
+      .eq('id', artifact.id);
+
+    if (error) {
+      window.alert(`Delete failed: ${error.message}`);
+      return;
+    }
+
+    onDeleted?.(artifact.id);
+  }
 
   return (
     <div
@@ -52,6 +73,15 @@ export default function ArtifactCard({ artifact, compact }: Props) {
           <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">{artifact.type}</span>
         </div>
         <div className="flex items-center gap-1.5">
+          {canDelete && (
+            <button
+              onClick={handleDelete}
+              className="opacity-0 group-hover:opacity-100 p-1 rounded text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all"
+              title="Delete draft"
+            >
+              <Trash2 className="w-3 h-3" />
+            </button>
+          )}
           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${stateColors[artifact.state]}`}>
             {artifact.state}
           </span>

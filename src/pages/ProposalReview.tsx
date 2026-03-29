@@ -10,11 +10,26 @@ type Proposal = {
   status: string;
 };
 
+const ACCEPT_CRITERIA = [
+  "Coherence — expresses a single intelligible idea or unit",
+  "Relevance — belongs within the semantic scope of the field",
+  "Non-Redundancy — does not trivially duplicate an existing LIVE artifact",
+  "Legibility — interpretable without external reconstruction",
+];
+
+const REJECT_CRITERIA = [
+  "Incoherent or unintelligible",
+  "Structurally empty or meaningless",
+  "Spam, abuse, or adversarial input",
+  "Duplicates existing content without transformation",
+];
+
 export default function ProposalReview() {
   const { user } = useAuth();
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProposals();
@@ -109,22 +124,51 @@ export default function ProposalReview() {
             </p>
 
             {p.status === "PENDING" && (
-              <div className="flex gap-2 pt-1">
-                <button
-                  onClick={() => handleAccept(p)}
-                  disabled={acting === p.id}
-                  className="rounded border px-3 py-1 text-sm hover:bg-muted disabled:opacity-50"
-                >
-                  Accept
-                </button>
-                <button
-                  onClick={() => handleReject(p)}
-                  disabled={acting === p.id}
-                  className="rounded border px-3 py-1 text-sm hover:bg-muted disabled:opacity-50"
-                >
-                  Reject
-                </button>
-              </div>
+              <>
+                <div className="flex gap-2 pt-1">
+                  <button
+                    onClick={() => handleAccept(p)}
+                    disabled={acting === p.id}
+                    className="rounded border px-3 py-1 text-sm hover:bg-muted disabled:opacity-50"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={() => handleReject(p)}
+                    disabled={acting === p.id}
+                    className="rounded border px-3 py-1 text-sm hover:bg-muted disabled:opacity-50"
+                  >
+                    Reject
+                  </button>
+                  <button
+                    onClick={() => setExpanded(expanded === p.id ? null : p.id)}
+                    className="rounded border px-3 py-1 text-sm hover:bg-muted text-muted-foreground"
+                  >
+                    {expanded === p.id ? "Hide criteria" : "Show criteria"}
+                  </button>
+                </div>
+
+                {expanded === p.id && (
+                  <div className="mt-3 grid grid-cols-2 gap-4 text-xs border-t pt-3">
+                    <div>
+                      <p className="font-semibold mb-1">Accept if:</p>
+                      <ul className="space-y-1 text-muted-foreground">
+                        {ACCEPT_CRITERIA.map((c) => (
+                          <li key={c}>· {c}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="font-semibold mb-1">Reject if:</p>
+                      <ul className="space-y-1 text-muted-foreground">
+                        {REJECT_CRITERIA.map((c) => (
+                          <li key={c}>· {c}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         ))}

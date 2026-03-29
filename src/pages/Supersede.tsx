@@ -14,6 +14,14 @@ type Artifact = {
   original_author: string;
 };
 
+const SUPERSEDE_CRITERIA = [
+  "Correction — existing artifact contains error or flaw",
+  "Refinement — new artifact improves clarity, structure, or precision",
+  "Expansion — new artifact extends the concept materially",
+  "Reframe — provides a different valid interpretive lens",
+  "Replacement — existing artifact is no longer the best representative",
+];
+
 export default function Supersede() {
   const { user } = useAuth();
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
@@ -21,6 +29,7 @@ export default function Supersede() {
   const [selected, setSelected] = useState<Artifact | null>(null);
   const [acting, setActing] = useState(false);
   const [done, setDone] = useState<string | null>(null);
+  const [showCriteria, setShowCriteria] = useState(false);
 
   useEffect(() => {
     fetchLive();
@@ -77,6 +86,7 @@ export default function Supersede() {
 
     setDone(newArtifact.id);
     setSelected(null);
+    setShowCriteria(false);
     await fetchLive();
     setActing(false);
   }
@@ -118,7 +128,10 @@ export default function Supersede() {
         {artifacts.map((a) => (
           <div
             key={a.id}
-            onClick={() => setSelected(selected?.id === a.id ? null : a)}
+            onClick={() => {
+              setSelected(selected?.id === a.id ? null : a);
+              setShowCriteria(false);
+            }}
             className={`rounded border px-4 py-3 cursor-pointer text-sm transition-colors ${
               selected?.id === a.id ? "bg-muted border-foreground" : "hover:bg-muted"
             }`}
@@ -137,6 +150,25 @@ export default function Supersede() {
             Supersede <span className="font-medium">{selected.title}</span> (v{selected.version})?
             This will mark it <span className="font-mono text-xs">SUPERSEDED</span> and create a new <span className="font-mono text-xs">DRAFT</span>.
           </p>
+
+          <button
+            onClick={() => setShowCriteria(!showCriteria)}
+            className="text-xs text-muted-foreground hover:underline"
+          >
+            {showCriteria ? "Hide criteria" : "Show supersession criteria"}
+          </button>
+
+          {showCriteria && (
+            <div className="text-xs border-t pt-3 space-y-1">
+              <p className="font-semibold mb-2">Supersession is permitted only if at least one applies:</p>
+              <ul className="space-y-1 text-muted-foreground">
+                {SUPERSEDE_CRITERIA.map((c) => (
+                  <li key={c}>· {c}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <button
             onClick={handleSupersede}
             disabled={acting}

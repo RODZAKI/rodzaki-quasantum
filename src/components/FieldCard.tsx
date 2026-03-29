@@ -1,16 +1,37 @@
 import React from 'react';
 import { useStore } from '../lib/store';
+import { supabase } from '../lib/supabase';
 import type { Field } from '../lib/types';
-import { Users, FileText, Lock, Globe, User, ChevronRight, Shield } from 'lucide-react';
+import { Users, FileText, Lock, Globe, User, ChevronRight, Shield, Trash2 } from 'lucide-react';
 
 interface Props {
   field: Field;
 }
 
 export default function FieldCard({ field }: Props) {
-  const { setView } = useStore();
+  const { setView, currentUser, fields, setFields } = useStore();
 
   const stewardName = field.steward_display_name || 'Unknown Steward';
+
+  async function handleDelete(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (!window.confirm(`Delete field "${field.name}"? This cannot be undone.`)) return;
+
+    const { data: { session } } = await supabase.auth.getSession();
+    console.log('SESSION:', session);
+
+    const { error } = await supabase
+      .from('fields')
+      .delete()
+      .eq('id', field.id);
+
+    if (error) {
+      window.alert(`Delete failed: ${error.message}`);
+      return;
+    }
+
+    setFields(fields.filter(f => f.id !== field.id));
+  }
 
   return (
     <div
@@ -26,7 +47,18 @@ export default function FieldCard({ field }: Props) {
           {field.mode === 'SHARED' ? <Globe className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
           {field.mode}
         </span>
-        <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-indigo-400 transition-colors" />
+        <div className="flex items-center gap-2">
+          {currentUser && currentUser.id === field.steward_user_id && (
+            <button
+              onClick={handleDelete}
+              className="opacity-0 group-hover:opacity-100 p-1 rounded text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all"
+              title="Delete field"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+          <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-indigo-400 transition-colors" />
+        </div>
       </div>
 
       <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-indigo-300 transition-colors">

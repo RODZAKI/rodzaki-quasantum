@@ -165,27 +165,112 @@ export async function getRelationsByArtifact(artifactId: string) {
   return data;
 }
 
-/* ---------- PROPOSALS ---------- */
+export async function getProposalsByField(_fieldId: string) {
+  return [];
+}
 
-export async function getProposalsByField(fieldId: string) {
+export async function getMembershipsByField(_fieldId: string) {
+  return [];
+}
+
+/* ---------- DRAWERS ---------- */
+
+export async function getDrawers() {
   const { data, error } = await supabase
-    .from('proposals')
+    .from('drawers')
     .select('*')
-    .eq('field_id', fieldId);
+    .order('id');
 
   if (error) throw error;
   return data;
 }
 
-/* ---------- MEMBERSHIPS ---------- */
-
-export async function getMembershipsByField(fieldId: string) {
+export async function getDrawerById(id: string) {
   const { data, error } = await supabase
-    .from('memberships')
+    .from('drawers')
     .select('*')
-    .eq('field_id', fieldId);
+    .eq('id', id)
+    .single();
 
   if (error) throw error;
   return data;
 }
 
+/* ---------- DRAWER ASSIGNMENTS ---------- */
+
+export async function getAssignmentsByArtifact(artifactId: string) {
+  const { data, error } = await supabase
+    .from('artifact_drawer_assignments')
+    .select('*, drawers(*)')
+    .eq('artifact_id', artifactId);
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getArtifactsByDrawer(drawerId: string) {
+  const { data, error } = await supabase
+    .from('artifact_drawer_assignments')
+    .select('*, artifacts(*)')
+    .eq('drawer_id', drawerId)
+    .order('assigned_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function assignArtifactToDrawer(
+  artifactId: string,
+  drawerId: string,
+  confidence: number,
+  autoAssigned: boolean = true,
+  stewardOverride: boolean = false
+) {
+  const { data, error } = await supabase
+    .from('artifact_drawer_assignments')
+    .upsert([{
+      artifact_id: artifactId,
+      drawer_id: drawerId,
+      confidence,
+      auto_assigned: autoAssigned,
+      steward_override: stewardOverride
+    }], { onConflict: 'artifact_id,drawer_id' })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function removeArtifactFromDrawer(artifactId: string, drawerId: string) {
+  const { error } = await supabase
+    .from('artifact_drawer_assignments')
+    .delete()
+    .eq('artifact_id', artifactId)
+    .eq('drawer_id', drawerId);
+
+  if (error) throw error;
+}
+
+export async function updateArtifactClassification(
+  artifactId: string,
+  classification: {
+    primary_drawer: string;
+    drawer_weights: Record<string, number>;
+    row_class: string;
+    confidence: number;
+    alignment_flag: boolean;
+    resolving: boolean;
+    era?: string;
+  }
+) {
+  const { data, error } = await supabase
+    .from('artifacts')
+    .update(classification)
+    .eq('id', artifactId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}

@@ -11,6 +11,18 @@ export type ConstraintVisibility = 'FIELD_ONLY' | 'PUBLIC';
 export type RelationType = 'SUPPORTS' | 'CONTRADICTS' | 'EXTENDS' | 'SUPERSEDES' | 'DERIVES_FROM' | 'PARALLELS';
 export type RelationVisibility = 'FIELD_ONLY' | 'PUBLIC';
 export type ProposalStatus = 'UNREVIEWED' | 'REJECTED' | 'LINKED' | 'INTEGRATED';
+export type DrawerId =
+  | 'dharma'
+  | 'logos'
+  | 'maat'
+  | 'dao'
+  | 'rta'
+  | 'ayni'
+  | 'ubuntu'
+  | 'mitakuye-oyasin'
+  | 'sumak-kawsay';
+export type RowName = 'Shiva' | 'Spanda' | 'Shakti';
+export type RowClass = 'canonical' | 'developmental' | 'operational' | 'transitional';
 
 export interface Profile {
   id: string;
@@ -58,6 +70,13 @@ export interface Artifact {
   updated_at: string;
   author_name?: string | null;
   version_count?: number;
+  primary_drawer?: DrawerId | null;
+  drawer_weights?: Record<DrawerId, number> | null;
+  row_class?: RowClass | null;
+  confidence?: number | null;
+  alignment_flag?: boolean | null;
+  resolving?: boolean | null;
+  era?: string | null;
 }
 
 export interface ArtifactVersion {
@@ -105,6 +124,30 @@ export interface Proposal {
   status: ProposalStatus;
   created_at: string;
   linked_artifact_title?: string | null;
+}
+
+export interface Drawer {
+  id: DrawerId;
+  name: string;
+  tradition: string;
+  row_name: RowName;
+  description: string;
+  disqualifiers: string;
+  tiebreaker: string;
+  created_at: string;
+}
+
+export interface ArtifactDrawerAssignment {
+  id: string;
+  artifact_id: string;
+  drawer_id: DrawerId;
+  assigned_at: string;
+  assigned_by?: string | null;
+  confidence: number;
+  auto_assigned: boolean;
+  steward_override: boolean;
+  drawers?: Drawer;
+  artifacts?: Artifact;
 }
 
 export type AppView =
