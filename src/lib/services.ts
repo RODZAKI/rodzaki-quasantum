@@ -274,3 +274,107 @@ export async function updateArtifactClassification(
   if (error) throw error;
   return data;
 }
+
+/* ---------- PROFILES ---------- */
+
+export async function getProfile(userId: string) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (error) return null;
+  return data;
+}
+
+export async function upsertProfile(profile: {
+  id: string;
+  email: string;
+  display_name: string;
+  role?: string;
+}) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .upsert([profile], { onConflict: 'id' })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+/* ---------- VAULT ---------- */
+
+export async function getVaultEntries(section?: string) {
+  let query = supabase
+    .from('vault_entries')
+    .select('*, artifacts(id, title, primary_drawer, row_class, era)')
+    .order('sort_order', { ascending: true })
+    .order('curated_at', { ascending: true });
+
+  if (section) query = query.eq('vault_section', section);
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data;
+}
+
+export async function addVaultEntry(entry: {
+  artifact_id: string;
+  vault_section: string;
+  excerpt?: string;
+  display_blurb?: string;
+  sort_order?: number;
+  featured?: boolean;
+  display_date?: string;
+  external_url?: string;
+}) {
+  const { data, error } = await supabase
+    .from('vault_entries')
+    .insert([entry])
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateVaultEntry(id: string, updates: {
+  vault_section?: string;
+  excerpt?: string;
+  display_blurb?: string;
+  sort_order?: number;
+  featured?: boolean;
+  display_date?: string;
+  external_url?: string;
+}) {
+  const { data, error } = await supabase
+    .from('vault_entries')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function removeVaultEntry(id: string) {
+  const { error } = await supabase
+    .from('vault_entries')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+}
+
+export async function getVaultEntryByArtifact(artifactId: string) {
+  const { data, error } = await supabase
+    .from('vault_entries')
+    .select('*')
+    .eq('artifact_id', artifactId);
+
+  if (error) throw error;
+  return data;
+}

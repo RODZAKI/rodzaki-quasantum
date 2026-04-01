@@ -65,6 +65,7 @@ export default function Classify() {
   return (
     <div className="min-h-screen bg-slate-950 text-white pt-20 px-4">
       <div className="max-w-7xl mx-auto">
+        <a href="/quasantum/#/" className="text-xs text-slate-500 hover:text-slate-300 transition-colors mb-6 inline-block">← Back to QUASANTUM</a>
         <h1 className="text-2xl font-bold tracking-wider mb-2">CLASSIFY</h1>
         <p className="text-slate-400 text-sm mb-6">Assign artifacts to drawers.</p>
         <div className="grid grid-cols-12 gap-6">
