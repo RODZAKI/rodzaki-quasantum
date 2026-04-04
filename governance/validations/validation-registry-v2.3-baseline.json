@@ -1,0 +1,29 @@
+{
+  "artifact_id": "registry-v2.3-baseline",
+  "evaluated_event": {
+    "description": "Registry restored to 15-motif baseline after fragmentation in v2.1 and v2.2. Claimed resolution: multiple-candidate insertion instability eliminated."
+  },
+  "instability_signature": {
+    "pattern": "Simultaneous insertion of multiple HC candidates produced field fragmentation. Shard coherence collapsed across both attempts independently. Pattern: multi-candidate insertion → fragmentation, reproducible."
+  },
+  "equivalent_conditions_definition": {
+    "description": "Equivalent conditions = insertion of 2+ unvalidated HC candidates simultaneously into the same registry version. Field must be at stable baseline. Threshold parameter must be 0.15. Same shard set must be active."
+  },
+  "verification_mode": "replay",
+  "non_reversion_test": {
+    "cycles_tested": 3,
+    "result": "pass",
+    "evidence": "v2.4, v2.5, v2.6: all promotions used single-candidate sequential protocol. Zero fragmentation events post-v2.3. Multi-candidate insertion was not re-attempted. Non-reversion achieved by avoiding trigger condition, not by demonstrating trigger no longer produces failure."
+  },
+  "constraint_preservation_check": {
+    "result": "pass",
+    "evidence": "Threshold remained 0.15. No shards removed. Sequential protocol applied without exception. No constraint weakened."
+  },
+  "resolution_type": "suppressive",
+  "resolution_classification": "suppression",
+  "final_verdict": {
+    "M-I-7_pass": false,
+    "confidence": "high",
+    "notes": "Instability avoided via protocol constraint, not eliminated. Original failure mode not retested. Suppression via constraint solution. M-I-7 requires non-reversion under equivalent conditions — equivalent conditions were not reproduced."
+  }
+}

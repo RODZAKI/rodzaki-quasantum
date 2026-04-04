@@ -1,5 +1,6 @@
 ﻿import React, { useEffect, useState } from "react";
 import { getArtifactsByField, getDrawers, getAssignmentsByArtifact, assignArtifactToDrawer, removeArtifactFromDrawer, updateArtifactClassification } from "@/lib/services";
+import { logSentinel } from "@/lib/sentinels";
 import type { Artifact, Drawer, ArtifactDrawerAssignment, DrawerId, RowClass } from "@/lib/types";
 
 const FIELD_ID = "7ac54512-7d16-4223-993b-bd848e1a8cf7";
@@ -45,6 +46,14 @@ export default function Classify() {
       const primary_drawer = computePrimaryDrawer();
       const confidence = computeConfidence();
       const alignment_flag = computeAlignmentFlag();
+      if (alignment_flag) {
+        logSentinel({
+          type: "false_resolution",
+          artifact: selected.id,
+          resolution_type: primary_drawer,
+          note: "non-corrective resolution detected",
+        });
+      }
       await updateArtifactClassification(selected.id, { primary_drawer, drawer_weights: weights, row_class: rowClass, confidence, alignment_flag, resolving });
       for (const drawer of drawers) {
         const w = weights[drawer.id as DrawerId] ?? 0;

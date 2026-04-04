@@ -113,6 +113,13 @@ export default function ArtifactDetail() {
           ) : (
             <>
               <h1 className="text-2xl font-bold text-white mb-4">{artifact.title}</h1>
+              {artifact.interpretation && (
+                <div className="mt-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-sm italic leading-relaxed text-gray-300">
+                    {artifact.interpretation}
+                  </p>
+                </div>
+              )}
               <div className="text-sm text-slate-300 whitespace-pre-wrap">{artifact.content}</div>
             </>
           )}

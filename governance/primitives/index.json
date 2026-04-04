@@ -1,0 +1,11 @@
+{
+  "primitives": [
+    {
+      "id": "M-I-7",
+      "name": "Integration Criterion",
+      "class": "measurement_invariant",
+      "status": "canonical",
+      "file": "M-I-7.json"
+    }
+  ]
+}

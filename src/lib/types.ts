@@ -77,6 +77,7 @@ export interface Artifact {
   alignment_flag?: boolean | null;
   resolving?: boolean | null;
   era?: string | null;
+  interpretation?: string;
 }
 
 export interface ArtifactVersion {

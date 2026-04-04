@@ -1,0 +1,28 @@
+{
+  "validations": [
+    {
+      "artifact_id": "registry-v2.3-baseline",
+      "file": "validation-registry-v2.3-baseline.json",
+      "primitive": "M-I-7",
+      "resolution_type": "suppressive",
+      "M-I-7_pass": false,
+      "status": "evaluated"
+    },
+    {
+      "artifact_id": "probe-hcm006-c1-c2-replication",
+      "file": "validation-probe-hcm006-c1-c2-replication.json",
+      "primitive": "M-I-7",
+      "resolution_type": "corrective",
+      "M-I-7_pass": true,
+      "status": "evaluated"
+    },
+    {
+      "artifact_id": "schema-extension-v2.6",
+      "file": "validation-schema-extension-v2.6.json",
+      "primitive": "M-I-7",
+      "resolution_type": "preventive",
+      "M-I-7_pass": false,
+      "status": "evaluated"
+    }
+  ]
+}

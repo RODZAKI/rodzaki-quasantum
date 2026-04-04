@@ -1,0 +1,54 @@
+{
+  "id": "M-I-7",
+  "name": "Integration Criterion",
+  "class": "measurement_invariant",
+  "domain": "behavioral_validation",
+  "definition": "A constraint is integrated iff the system cannot revert to prior behavior under equivalent structural conditions.",
+  "test_condition": {
+    "input": "equivalent structural conditions",
+    "expected_output": "absence of prior instability pattern"
+  },
+  "instability_signature": {
+    "description": "Canonical pattern representing the prior instability that must not reoccur",
+    "required": true
+  },
+  "failure_condition": "Reproduction of prior behavior under equivalent conditions",
+  "non_reversion_scope": {
+    "minimum_cycles": 3,
+    "description": "Number of repeated validations under equivalent structural conditions required to confirm non-reversion"
+  },
+  "constraint_preservation_check": {
+    "description": "Ensures no existing constraints are removed, weakened, or bypassed to achieve pass condition",
+    "required": true
+  },
+  "condition_equivalence_requirements": [
+    "Input structure must match prior failure context",
+    "Relevant system state variables must be within tolerance bounds",
+    "No structural constraints removed or bypassed to achieve pass condition"
+  ],
+  "verification_mode": {
+    "allowed_values": ["replay", "simulation", "live"],
+    "description": "replay = re-execution under original conditions; simulation = modeled re-execution; live = real-time observation",
+    "default": null,
+    "required_for": "canonical validation claims"
+  },
+  "edge_constraints": [
+    "Equivalent structural conditions must be explicitly defined",
+    "Passing via context-shift invalidates test",
+    "Resolution that introduces new constraints must be flagged separately"
+  ],
+  "implications": [
+    "Integration is behaviorally verifiable, not epistemically claimed",
+    "Stability claims require non-reversion validation",
+    "Distinguishes true resolution from deferral or displacement"
+  ],
+  "dependencies": [],
+  "related_primitives": [
+    "RI-006",
+    "RI-008",
+    "RI-009"
+  ],
+  "constraint_scope": "domain-level",
+  "status": "canonical",
+  "notes": "Core invariant for all downstream validation, including motif stability, governance integrity, and trajectory inference. Resolution classification: resolution = instability eliminated; suppression = instability hidden but recoverable; displacement = instability moved to another subsystem."
+}

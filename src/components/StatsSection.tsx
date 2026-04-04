@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getFields, getPublicArtifacts, getRelationsByField, getConstraintsByField } from '../lib/services';
+import { logSentinel } from '../lib/sentinels';
 import { Layers, FileText, GitBranch, Link2, Users, Lock } from 'lucide-react';
 
 export default function StatsSection() {
@@ -20,6 +21,16 @@ export default function StatsSection() {
         const fieldId = f[0].id;
         const r = await getRelationsByField(fieldId);
         const c = await getConstraintsByField(fieldId);
+        const previous = relations.length;
+        const current = (r || []).length;
+        if (previous > 0 && current >= previous * 2) {
+          logSentinel({
+            type: "connectivity_spike",
+            node: fieldId,
+            change: `+${Math.round(((current - previous) / previous) * 100)}%`,
+            note: "connection count doubled or more",
+          });
+        }
         setRelations(r || []);
         setConstraints(c || []);
       }

@@ -24,6 +24,7 @@ import ProposalReview from "./pages/ProposalReview";
 import Supersede from "./pages/Supersede";
 import Observe from "./pages/Observe";
 import Lineage from "./pages/Lineage";
+import Fields from "./pages/Fields";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -57,6 +58,7 @@ function AppShell() {
             <Route path="/supersede" element={<Supersede />} />
             <Route path="/observe" element={<Observe />} />
             <Route path="/lineage" element={<Lineage />} />
+            <Route path="/fields" element={<Fields />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </HashRouter>

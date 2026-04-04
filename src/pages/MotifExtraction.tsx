@@ -1,6 +1,7 @@
 // src/pages/MotifExtraction.tsx
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { logSentinel } from '../lib/sentinels';
 import {
   fetchLatestMotifReport,
   fetchMotifReportHistory,
@@ -174,6 +175,14 @@ export default function MotifExtractionPage() {
       try {
         const result = await fetchMaatDrift();
         setDriftData(result);
+        const affected = result.drift.filter(s => s.delta !== 0);
+        if (affected.length > 1) {
+          logSentinel({
+            type: "propagation_breach",
+            shards_affected: affected.length,
+            note: "delta spread beyond single shard",
+          });
+        }
         setDriftError(null);
       } catch (e) {
         setDriftError(e instanceof Error ? e.message : String(e));

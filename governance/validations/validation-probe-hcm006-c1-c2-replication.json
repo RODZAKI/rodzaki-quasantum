@@ -1,0 +1,29 @@
+{
+  "artifact_id": "probe-hcm006-c1-c2-replication",
+  "evaluated_event": {
+    "description": "Probe C1 result confirmed as reproducible pattern. Probe C2 replicated under equivalent conditions with structural variation."
+  },
+  "instability_signature": {
+    "pattern": "Single probe result epistemically unreliable — could reflect noise, shard-specific sensitivity, or measurement artifact rather than genuine motif coupling."
+  },
+  "equivalent_conditions_definition": {
+    "description": "Same HC-M006 weight profile, same v2.5 canonical motif base, different target shard, same threshold. Shard must be structurally distinct from hybrid-001. Result must show same directional behavior on target shard with all others FLAT."
+  },
+  "verification_mode": "replay",
+  "non_reversion_test": {
+    "cycles_tested": 3,
+    "result": "pass",
+    "evidence": "C1: hybrid-001 delta -0.1000, 8 others FLAT. C2: legacy-006 delta -0.0456, 8 others FLAT. Dry-run: scores reproduced identically. Three independent executions confirmed same structural pattern across different eras, different motif densities, different target shards."
+  },
+  "constraint_preservation_check": {
+    "result": "pass",
+    "evidence": "Weight profile unchanged. Threshold 0.15 maintained. No shards excluded. DRY_RUN flag computation-only. No constraint weakened."
+  },
+  "resolution_type": "corrective",
+  "resolution_classification": "resolution",
+  "final_verdict": {
+    "M-I-7_pass": true,
+    "confidence": "high",
+    "notes": "Reference case for M-I-7 compliance. Instability observed, conditions reproduced with structural variation, behavior held, constraints preserved. True corrective resolution."
+  }
+}
