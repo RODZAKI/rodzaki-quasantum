@@ -59,6 +59,8 @@ const V25_MOTIFS = [
 ]
 
 async function main() {
+  const DRY_RUN = true
+
   console.log('⟁ PROBE C2 — HC-M006 legacy-006 target')
   console.log('  Target shard: legacy-006')
   console.log('  Version: v2.5-probe-c2\n')
@@ -77,15 +79,19 @@ async function main() {
     }
   }
 
-  const { data, error } = await supabase
-    .from('motif_registries')
-    .insert([{ version: probeRegistry.version, created_at: probeRegistry.created_at, source: probeRegistry.source, content: probeRegistry.content }])
-    .select()
-
-  if (error) { console.error('Insert failed:', error.message); process.exit(1) }
-
-  const registryId = data[0]?.id
-  console.log(`Registry inserted: ${data[0]?.version} | ID: ${registryId}`)
+  let registryId
+  if (DRY_RUN) {
+    console.log('DRY RUN — registry insert skipped')
+    registryId = 'dry-run-id'
+  } else {
+    const { data, error } = await supabase
+      .from('motif_registries')
+      .insert([{ version: probeRegistry.version, created_at: probeRegistry.created_at, source: probeRegistry.source, content: probeRegistry.content }])
+      .select()
+    if (error) { console.error('Insert failed:', error.message); process.exit(1) }
+    registryId = data[0]?.id
+    console.log(`Registry inserted: ${data[0]?.version} | ID: ${registryId}`)
+  }
 
   const artifactMaatMap = {}
   for (const motif of probeRegistry.content.motifs) {
@@ -104,12 +110,17 @@ async function main() {
     motif_count: stats.count,
   }))
 
-  const { error: snapError } = await supabase
-    .from('artifact_maat_snapshots')
-    .upsert(snapshots, { ignoreDuplicates: true })
+  if (DRY_RUN) {
+    console.log('DRY RUN — snapshot upsert skipped')
+    console.log('Snapshots that WOULD have been written:', JSON.stringify(snapshots, null, 2))
+  } else {
+    const { error: snapError } = await supabase
+      .from('artifact_maat_snapshots')
+      .upsert(snapshots, { ignoreDuplicates: true })
+    if (snapError) { console.error('Snapshot insert failed:', snapError.message); process.exit(1) }
+    console.log(`Snapshots inserted: ${snapshots.length}`)
+  }
 
-  if (snapError) { console.error('Snapshot insert failed:', snapError.message); process.exit(1) }
-  console.log(`Snapshots inserted: ${snapshots.length}`)
   console.log('\nProbe C2 complete. Run check-drift.js next — compare v2.5 → v2.5-probe-c2')
 }
 

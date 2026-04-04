@@ -31,7 +31,7 @@ async function main() {
   const { data: registries, error: regError } = await supabase
     .from('motif_registries')
     .select('id, version, created_at')
-    .in('version', ['v2.5', 'v2.5-probe-c2'])
+    .in('version', ['v2.5', 'v2.6'])
     .order('created_at', { ascending: true })
 
   if (regError) { console.error('Registry fetch failed:', regError.message); process.exit(1) }

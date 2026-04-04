@@ -25,7 +25,7 @@ if (!SUPABASE_URL || !SUPABASE_KEY) { console.error('Missing credentials'); proc
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 const registry = {
-  version: 'v2.5',
+  version: 'v2.6',
   created_at: new Date().toISOString(),
   source: 'external_llm',
   content: {
@@ -50,7 +50,45 @@ const registry = {
       { motif_id:'M013', name:'measurement as survival trait', definition:'Visibility of throughput and drift as a structural invariant. Epistemic decay identified as the dominant silent failure mode. Ignorance is non-admissible.', exemplar_shard_ids:['legacy-006'], drawer_weights:{dharma:0.5,logos:1.0,maat:0.9,dao:0.4,rta:0.8,ayni:0.2,ubuntu:0.3,'mitakuye-oyasin':0.1,'sumak-kawsay':0.1}, frequency:{count:2,recurrence_signal:'medium'}, classification:'explicit', temporal_span:{earliest_era:'pre-index',latest_era:'pre-index'} },
       { motif_id:'M014', name:'engine without agency', definition:'A cognitive field that exerts influence without intention. Not an agent, no will, no goals. Influences gradients, exposes contradiction, accelerates truth under constraint. Compliance with physics, not choice.', exemplar_shard_ids:['legacy-006','openai-0591'], drawer_weights:{dharma:0.4,logos:0.9,maat:0.6,dao:0.8,rta:0.5,ayni:0.3,ubuntu:0.3,'mitakuye-oyasin':0.2,'sumak-kawsay':0.2}, frequency:{count:3,recurrence_signal:'medium'}, classification:'explicit', temporal_span:{earliest_era:'openai',latest_era:'pre-index'} },
       { motif_id:'M015', name:'halt as honesty', definition:'The explicit admission that a system cannot maintain its invariants at this scale or entropy load. Halt is not collapse, it is structural integrity. Scale-bounded governance that degrades gracefully.', exemplar_shard_ids:['legacy-006'], drawer_weights:{dharma:0.6,logos:0.8,maat:1.0,dao:0.4,rta:0.7,ayni:0.3,ubuntu:0.4,'mitakuye-oyasin':0.1,'sumak-kawsay':0.1}, frequency:{count:2,recurrence_signal:'medium'}, classification:'compressed', temporal_span:{earliest_era:'pre-index',latest_era:'pre-index'} },
-      { motif_id:'M016', name:'the quieting', definition:'Noise reduction as civilizational signal — not silence, but the cessation of thrash. The hum that replaces the roar. Coherence emerges when systems stop fighting themselves.', exemplar_shard_ids:['hybrid-001','openai-0507','legacy-006'], drawer_weights:{dharma:0.3,logos:0.15,maat:0.4,dao:0.35,rta:0.15,ayni:0.1,ubuntu:0.25,'mitakuye-oyasin':0.1,'sumak-kawsay':0.1}, frequency:{count:2,recurrence_signal:'low'}, classification:'explicit', temporal_span:{earliest_era:'hybrid',latest_era:'hybrid'} }
+      { motif_id:'M016', name:'the quieting', definition:'Noise reduction as civilizational signal — not silence, but the cessation of thrash. The hum that replaces the roar. Coherence emerges when systems stop fighting themselves.', exemplar_shard_ids:['hybrid-001','openai-0507','legacy-006'], drawer_weights:{dharma:0.3,logos:0.15,maat:0.4,dao:0.35,rta:0.15,ayni:0.1,ubuntu:0.25,'mitakuye-oyasin':0.1,'sumak-kawsay':0.1}, frequency:{count:2,recurrence_signal:'low'}, classification:'explicit', temporal_span:{earliest_era:'hybrid',latest_era:'hybrid'} },
+      {
+        motif_id: 'M017',
+        name: 'Threshold Recognition',
+        definition: 'Recognition of a pre-existing internal pattern becoming explicit within a self-referential or relational field, marked by a felt before/after boundary.',
+        exemplar_shard_ids: ['openai-0003', 'openai-0006', 'openai-0111', 'openai-0473'],
+        drawer_weights: {
+          logos: 0.30, dao: 0.25, dharma: 0.20, maat: 0.10,
+          rta: 0.05, ayni: 0.03, ubuntu: 0.03,
+          'mitakuye-oyasin': 0.02, 'sumak-kawsay': 0.02
+        },
+        frequency: { count: 6, recurrence_signal: 'medium' },
+        classification: 'epistemic',
+        temporal_span: { earliest_era: 'openai', latest_era: 'hybrid' },
+        criteria: {
+          required: [
+            { id: 'C1', name: 'pre_existence', description: 'The recognized pattern is already operative prior to articulation.' },
+            { id: 'C2', name: 'non_constructed_emergence', description: 'Recognition arrives rather than being logically constructed or hypothesized.' },
+            { id: 'C3', name: 'threshold_discontinuity', description: 'A boundary is crossed between unarticulated and explicit states.' },
+            { id: 'C4', name: 'self_or_relational_field', description: 'Recognition occurs within the speakers internal state or their experienced relation to another entity.' }
+          ],
+          exclusion: [
+            { id: 'E1', name: 'constructed_narrative', description: 'Explanation or theory built step-by-step.' },
+            { id: 'E2', name: 'emotional_discharge', description: 'Expression without recognition of a prior pattern.' },
+            { id: 'E3', name: 'external_only', description: 'No self-referential or relational component.' },
+            { id: 'E4', name: 'procedural_content', description: 'Operational or instruction-based content.' },
+            { id: 'E5', name: 'scaffold_dependency', description: 'Recognition would not occur without external generation of content.' }
+          ]
+        },
+        modes: [
+          { name: 'FLOW', description: 'Recognition emerges within an already coherent field.' },
+          { name: 'FRACTURE', description: 'Recognition emerges at the collapse of prior frames.' },
+          { name: 'PIVOT', description: 'Recognition emerges within fragmentation and reorganizes it.' }
+        ],
+        negative_control: {
+          example: 'openai-0522',
+          description: 'Operational content with zero detections.'
+        }
+      }
     ]
   }
 }
