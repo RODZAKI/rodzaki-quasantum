@@ -496,12 +496,6 @@
   ],
   "approx_tokens": 132486,
   "source": "openai",
-  "drawers": [
-    "rta"
-  ],
-  "alignment_flag": true,
-  "confidence": 7.0,
-  "statement_type": "directive",
   "drawer_weights": {
     "dharma": 5,
     "logos": 0.0,
@@ -513,6 +507,13 @@
     "mitakuye-oyasin": 0.0,
     "sumak-kawsay": 1
   },
+  "context_metrics": {
+    "mitakuye_score": 41,
+    "ayni_score": 15,
+    "mitakuye_norm": 0.0067,
+    "ayni_norm": 0.0024
+  },
+  "interpretation": "active system construction, expressed through a structurally anchored directive, with secondary influence from alignment with natural flow.",
   "drawer_weights_normalized": {
     "dharma": 0.2778,
     "logos": 0.0,
@@ -524,53 +525,29 @@
     "mitakuye-oyasin": 0.0,
     "sumak-kawsay": 0.0556
   },
-  "context_metrics": {
-    "mitakuye_score": 41,
-    "ayni_score": 15,
-    "mitakuye_norm": 0.0067,
-    "ayni_norm": 0.0024
-  },
-  "interpretation": "active system construction, expressed through a structurally anchored directive, with secondary influence from alignment with natural flow.",
-  "related_artifacts": [
-    {
-      "id": "openai-0127",
-      "score": 0.9921
-    },
-    {
-      "id": "openai-0013",
-      "score": 0.9824
-    },
-    {
-      "id": "openai-0067",
-      "score": 0.9679
-    },
-    {
-      "id": "openai-0556",
-      "score": 0.764
-    },
-    {
-      "id": "openai-0292",
-      "score": 0.7609
-    }
+  "drawers": [
+    "rta"
   ],
+  "confidence": 7.0,
+  "alignment_flag": true,
+  "statement_type": "directive",
   "relations": [
+    {
+      "target": "openai-0009",
+      "score": 0.9953
+    },
     {
       "target": "openai-0127",
       "score": 0.9921
     },
     {
-      "target": "openai-0013",
-      "score": 0.9824
-    },
-    {
-      "target": "openai-0067",
-      "score": 0.9679
+      "target": "openai-0158",
+      "score": 0.9921
     }
   ],
   "relation_meta": {
     "K_used": 3,
     "passes": 1,
-    "avg_score": 0.7539
-  },
-  "field_id": "F-001"
+    "avg_score": 0.754
+  }
 }

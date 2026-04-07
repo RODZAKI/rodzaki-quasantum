@@ -1,165 +1,139 @@
-import React, { useEffect, useState } from 'react';
-import { useStore } from '../lib/store';
-import { getArtifactById, getVersionsByArtifact, getRelationsByArtifact, getFieldById, updateArtifact, createVersion } from '../lib/services';
-import {
-  ArrowLeft, FileText, BookOpen, Scroll, BookMarked, Library, Award,
-  GitBranch, Eye, Lock, Globe, User, Clock, Edit3, Save, X,
-  ChevronDown, ChevronUp, Link2, ArrowRight, Shield
-} from 'lucide-react';
+import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
+import RelationGraph from "@/components/RelationGraph"
 
-const typeIcons: Record<string, React.ElementType> = {
-  NOTE: FileText, FRAGMENT: Scroll, ESSAY: BookOpen, CHAPTER: BookMarked, TREATISE: Library, CHARTER: Award,
-};
+type Relation = {
+  target: string
+  score: number
+}
+
+type Artifact = {
+  id: string
+  content?: string
+  messages?: any[]
+  relations?: any[]
+  primary_drawer?: string
+  row_class?: string
+  confidence?: number
+  era?: string
+  alignment_flag?: boolean
+}
 
 export default function ArtifactDetail() {
-  const { selectedFieldId, selectedArtifactId, setView, currentUser, currentRole } = useStore();
+  console.log("ArtifactDetail mounted")
 
-  const [artifact, setArtifact] = useState<any>(null);
-  const [field, setField] = useState<any>(null);
-  const [versions, setVersions] = useState<any[]>([]);
-  const [relations, setRelations] = useState<any[]>([]);
-
-  const [editing, setEditing] = useState(false);
-  const [editContent, setEditContent] = useState('');
-  const [editTitle, setEditTitle] = useState('');
-  const [showVersions, setShowVersions] = useState(false);
+  const { id } = useParams()
+  const [artifact, setArtifact] = useState<Artifact | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!selectedArtifactId || !selectedFieldId) return;
+    if (!id) {
+      console.log("No ID in params")
+      return
+    }
 
-    getArtifactById(selectedArtifactId).then(setArtifact);
-    getFieldById(selectedFieldId).then(setField);
-    getVersionsByArtifact(selectedArtifactId).then(setVersions);
-    getRelationsByArtifact(selectedArtifactId).then(setRelations);
-  }, [selectedArtifactId, selectedFieldId]);
+    const url = `https://rodzaki.github.io/artifacts/working/${id}.json`
 
-  if (!artifact || !field) return null;
+    console.log("Fetching artifact from:", url)
 
-  const TypeIcon = typeIcons[artifact.type] || FileText;
-  const isSteward = currentUser?.id === field.steward_user_id;
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`)
+        }
+        return res.json()
+      })
+      .then((data) => {
+        console.log("ARTIFACT LOADED:", data)
+        console.log("RELATIONS:", data)
+        setArtifact(data)
+      })
+      .catch((err) => {
+        console.error("Failed to load artifact:", err)
+        setError(err.message)
+      })
+  }, [id])
 
-  const startEditing = () => {
-    setEditContent(artifact.content);
-    setEditTitle(artifact.title);
-    setEditing(true);
-  };
+  const getRole = (m: any) => m.role || m.author?.role || "message"
 
-  const saveEdit = async () => {
-    if (!editContent.trim()) return;
+  const getText = (m: any) => {
+    if (typeof m.content === "string") return m.content
 
-    const newVersionNum = (versions[0]?.version_number || 0) + 1;
+    if (Array.isArray(m.content)) {
+      return m.content
+        .filter((p: any) => typeof p === "string" || p?.text)
+        .map((p: any) => (typeof p === "string" ? p : p.text))
+        .join(" ")
+    }
 
-    await createVersion({
-      artifact_id: artifact.id,
-      version_number: newVersionNum,
-      content_snapshot: `Edited: ${editTitle}`,
-      edited_by: currentUser?.id,
-    });
+    if (typeof m.text === "string") return m.text
 
-    await updateArtifact(artifact.id, {
-      title: editTitle,
-      content: editContent,
-      version_count: newVersionNum,
-    });
+    return ""
+  }
 
-    const updated = await getArtifactById(artifact.id);
-    const updatedVersions = await getVersionsByArtifact(artifact.id);
+  const renderContent = () => {
+    if (!artifact) return null
 
-    setArtifact(updated);
-    setVersions(updatedVersions);
-    setEditing(false);
-  };
+    if (artifact.content) {
+      return <div className="whitespace-pre-wrap">{artifact.content}</div>
+    }
 
-  return (
-    <div className="min-h-screen pt-20 pb-16 px-4 sm:px-6">
-      <div className="max-w-4xl mx-auto">
-
-        <button
-          onClick={() => setView('field-detail', selectedFieldId)}
-          className="flex items-center gap-2 text-sm text-slate-400 hover:text-white mb-6"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to {field.name}
-        </button>
-
-        <div className="bg-slate-900/50 border border-slate-800/50 rounded-2xl p-6 mb-6">
-
-          <div className="flex items-center gap-3 mb-4">
-            <TypeIcon className="w-5 h-5 text-indigo-400" />
-            <span className="text-xs text-slate-500 uppercase">{artifact.type}</span>
-          </div>
-
-          {editing ? (
-            <div className="space-y-4">
-              <input
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-                className="w-full bg-slate-800 border px-4 py-2 text-white"
-              />
-              <textarea
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-                rows={12}
-                className="w-full bg-slate-800 border px-4 py-3 text-white"
-              />
-              <div className="flex gap-2">
-                <button onClick={saveEdit} className="bg-green-600 px-4 py-2 text-white">
-                  <Save className="w-4 h-4 inline mr-1" /> Save
-                </button>
-                <button onClick={() => setEditing(false)} className="bg-slate-700 px-4 py-2 text-white">
-                  <X className="w-4 h-4 inline mr-1" /> Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <h1 className="text-2xl font-bold text-white mb-4">{artifact.title}</h1>
-              {artifact.interpretation && (
-                <div className="mt-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="text-sm italic leading-relaxed text-gray-300">
-                    {artifact.interpretation}
-                  </p>
-                </div>
-              )}
-              <div className="text-sm text-slate-300 whitespace-pre-wrap">{artifact.content}</div>
-            </>
-          )}
-
-          <div className="mt-6 text-xs text-slate-500 flex gap-4">
-            <span><User className="w-3 h-3 inline" /> {artifact.author_name}</span>
-            <span><Clock className="w-3 h-3 inline" /> {new Date(artifact.created_at).toLocaleDateString()}</span>
-          </div>
-
-        </div>
-
-        <div className="bg-slate-900 border rounded-2xl mb-6">
-          <button
-            onClick={() => setShowVersions(!showVersions)}
-            className="w-full p-4 text-left text-white flex justify-between"
-          >
-            Version History ({versions.length})
-            {showVersions ? <ChevronUp /> : <ChevronDown />}
-          </button>
-
-          {showVersions && versions.map(v => (
-            <div key={v.id} className="p-4 border-t text-sm text-slate-400">
-              v{v.version_number} — {v.content_snapshot}
+    if (artifact.messages && artifact.messages.length > 0) {
+      return (
+        <div className="space-y-4">
+          {artifact.messages.slice(0, 20).map((m: any, i: number) => (
+            <div key={i} className="text-sm text-gray-300">
+              <span className="font-semibold text-white">
+                {getRole(m)}:
+              </span>{" "}
+              {getText(m)}
             </div>
           ))}
         </div>
+      )
+    }
 
-        {relations.length > 0 && (
-          <div className="bg-slate-900 border rounded-2xl p-4">
-            <h3 className="text-white mb-3">Relations</h3>
-            {relations.map(r => (
-              <div key={r.id} className="flex items-center gap-2 text-sm text-indigo-400">
-                <ArrowRight className="w-3 h-3" />
-                {r.relation_type}
-              </div>
-            ))}
-          </div>
-        )}
+    return <div>No content available</div>
+  }
 
+  if (error) {
+    return (
+      <div className="p-4 text-red-400">
+        Error loading artifact: {error}
       </div>
+    )
+  }
+
+  if (!artifact) {
+    return <div className="p-4">Loading artifact...</div>
+  }
+
+  return (
+    <div className="p-6 space-y-6 text-white">
+      <h1 className="text-xl font-bold">
+        {artifact.id}
+      </h1>
+
+      <div className="text-xs text-gray-400 space-y-1">
+        <div>Primary Drawer: {artifact.primary_drawer || "—"}</div>
+        <div>Row Class: {artifact.row_class || "—"}</div>
+        <div>Confidence: {artifact.confidence ?? "—"}</div>
+        <div>
+          Alignment: {artifact.alignment_flag ? "Aligned" : "Misaligned"}
+        </div>
+        <div>Era: {artifact.era || "—"}</div>
+      </div>
+
+      <div className="border-t border-gray-700 pt-4">
+        {renderContent()}
+      </div>
+
+      {artifact?.relations && artifact.relations.length > 0 && (
+        <RelationGraph
+          centerId={artifact.id}
+          relations={artifact.relations as any}
+        />
+      )}
     </div>
-  );
+  )
 }

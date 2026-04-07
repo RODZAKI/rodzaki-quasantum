@@ -6,7 +6,7 @@ import re
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tools.interpret import interpret_artifact
 
-ARTIFACTS_DIR = "artifacts/threads"
+ARTIFACTS_DIR = os.environ.get("ARTIFACTS_DIR", "artifacts/threads")
 MIN_SCORE = 2
 
 DRAWER_KEYWORDS = {

@@ -631,22 +631,22 @@
   ],
   "relations": [
     {
+      "target": "openai-0017",
+      "score": 0.9964
+    },
+    {
+      "target": "openai-0066",
+      "score": 0.9955
+    },
+    {
       "target": "openai-0043",
       "score": 0.9951
-    },
-    {
-      "target": "openai-0121",
-      "score": 0.9852
-    },
-    {
-      "target": "openai-0072",
-      "score": 0.9737
     }
   ],
   "relation_meta": {
     "K_used": 3,
     "passes": 1,
-    "avg_score": 0.7539
+    "avg_score": 0.754
   },
   "field_id": "F-002"
 }

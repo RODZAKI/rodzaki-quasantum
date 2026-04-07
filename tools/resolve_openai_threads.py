@@ -1,17 +1,21 @@
 import json
 import glob
-import os
 from pathlib import Path
 from datetime import datetime, timezone
 
 INDEX_PATH = Path(r"C:\Users\david\Projects\rodzaki-quasantum\artifacts\_staging\openai-thread-index.json")
 SHARD_DIR = Path(r"C:\Users\david\Downloads\Thunk-Threads 3-20-26")
 THREADS_DIR = Path(r"C:\Users\david\Projects\rodzaki-quasantum\artifacts\threads")
-CORPUS_PATH = Path(r"C:\Users\david\Projects\rodzaki-quasantum\artifacts\thread-corpus.json")
 
 TITLE_KEYWORDS = ["master index", "magnum opus", "quasantum"]
 MIN_TOKENS = 20000
 MAX_THREADS = 40
+
+FORCE_INCLUDE_IDS = {
+    "openai-0003","openai-0006","openai-0009","openai-0017","openai-0051",
+    "openai-0063","openai-0066","openai-0038","openai-0158","openai-0356",
+    "openai-0011","openai-0273","openai-0453"
+}
 
 
 def load_index():
@@ -26,14 +30,15 @@ def select_threads(index):
         tokens = entry.get("approx_tokens", 0)
         has_code = entry.get("has_code", False)
 
-        if any(kw in title for kw in TITLE_KEYWORDS):
+        if entry["id"] in FORCE_INCLUDE_IDS:
+            selected.append(entry)
+        elif any(kw in title for kw in TITLE_KEYWORDS):
             selected.append(entry)
         elif tokens >= MIN_TOKENS:
             selected.append(entry)
         elif has_code:
             selected.append(entry)
 
-    # deduplicate (entry may match multiple criteria)
     seen = set()
     deduped = []
     for e in selected:
@@ -41,10 +46,12 @@ def select_threads(index):
             seen.add(e["id"])
             deduped.append(e)
 
-    # if over limit, take highest approx_tokens first
     if len(deduped) > MAX_THREADS:
-        deduped.sort(key=lambda e: e.get("approx_tokens", 0), reverse=True)
-        deduped = deduped[:MAX_THREADS]
+        forced = [e for e in deduped if e["id"] in FORCE_INCLUDE_IDS]
+        optional = [e for e in deduped if e["id"] not in FORCE_INCLUDE_IDS]
+        optional.sort(key=lambda e: e.get("approx_tokens", 0), reverse=True)
+        remaining = MAX_THREADS - len(forced)
+        deduped = forced + optional[:max(remaining, 0)]
 
     return deduped
 
@@ -62,11 +69,6 @@ def iter_source_conversations():
 
 
 def build_position_index(selected_positions):
-    """
-    Re-iterate source conversations and collect the ones at the requested
-    1-based positions (matching the sequential openai-XXXX IDs).
-    Returns dict: position -> convo dict
-    """
     result = {}
     position = 1
     for convo in iter_source_conversations():
@@ -91,7 +93,7 @@ def extract_messages(mapping):
     if not mapping or not isinstance(mapping, dict):
         return []
     messages = []
-    for node_id, node in mapping.items():
+    for _, node in mapping.items():
         try:
             msg = node.get("message")
             if not msg:
@@ -141,13 +143,6 @@ def resolve_thread(index_entry, convo):
     }
 
 
-def load_corpus():
-    if CORPUS_PATH.exists():
-        with open(CORPUS_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
-
 def main():
     print("Loading index...")
     index = load_index()
@@ -157,10 +152,9 @@ def main():
     selected = select_threads(index)
     print(f"  {len(selected)} threads selected")
     for e in selected:
-        title_safe = (e.get('title','')[:60]).encode('ascii', errors='replace').decode('ascii')
-        print(f"    {e['id']}  tokens={e.get('approx_tokens',0)}  has_code={e.get('has_code')}  title={title_safe}")
+        title_safe = (e.get('title', '')[:60]).encode('ascii', errors='replace').decode('ascii')
+        print(f"    {e['id']}  tokens={e.get('approx_tokens', 0)}  has_code={e.get('has_code')}  title={title_safe}")
 
-    # parse 1-based positions from sequential IDs (openai-0001 -> 1)
     selected_positions = {}
     for entry in selected:
         try:
@@ -190,26 +184,6 @@ def main():
         resolved_ids.add(entry["id"])
         print(f"  Written: {out_path.name}  ({len(thread['messages'])} messages)")
 
-    print(f"\nUpdating thread corpus...")
-    corpus = load_corpus()
-    existing_ids = {e["id"] for e in corpus}
-
-    added = 0
-    for thread_id in resolved_ids:
-        if thread_id not in existing_ids:
-            corpus.append({
-                "id": thread_id,
-                "era": "openai",
-                "source": "openai",
-                "path": f"artifacts/threads/{thread_id}.json",
-            })
-            added += 1
-
-    with open(CORPUS_PATH, "w", encoding="utf-8") as f:
-        json.dump(corpus, f, indent=2, ensure_ascii=False)
-
-    print(f"  {added} new entries added to corpus ({len(corpus)} total)")
-    print(f"  Corpus written to: {CORPUS_PATH}")
     print(f"\nDone. {len(resolved_ids)} threads resolved.")
 
 

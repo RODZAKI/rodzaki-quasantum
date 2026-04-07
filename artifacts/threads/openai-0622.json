@@ -1566,13 +1566,6 @@
   ],
   "approx_tokens": 161689,
   "source": "openai",
-  "drawers": [
-    "dharma",
-    "logos"
-  ],
-  "alignment_flag": true,
-  "confidence": 7.0,
-  "statement_type": "question",
   "drawer_weights": {
     "dharma": 7,
     "logos": 7,
@@ -1584,6 +1577,13 @@
     "mitakuye-oyasin": 0.0,
     "sumak-kawsay": 2.5
   },
+  "context_metrics": {
+    "mitakuye_score": 156,
+    "ayni_score": 56,
+    "mitakuye_norm": 0.0183,
+    "ayni_norm": 0.0066
+  },
+  "interpretation": "a structurally anchored directive, expressed through reflective articulation, with secondary influence from active system construction.",
   "drawer_weights_normalized": {
     "dharma": 0.3256,
     "logos": 0.3256,
@@ -1595,35 +1595,13 @@
     "mitakuye-oyasin": 0.0,
     "sumak-kawsay": 0.1163
   },
-  "context_metrics": {
-    "mitakuye_score": 156,
-    "ayni_score": 56,
-    "mitakuye_norm": 0.0183,
-    "ayni_norm": 0.0066
-  },
-  "interpretation": "a structurally anchored directive, expressed through reflective articulation, with secondary influence from active system construction.",
-  "related_artifacts": [
-    {
-      "id": "openai-0148",
-      "score": 0.9973
-    },
-    {
-      "id": "openai-0503",
-      "score": 0.9973
-    },
-    {
-      "id": "openai-0483",
-      "score": 0.9965
-    },
-    {
-      "id": "openai-0527",
-      "score": 0.9955
-    },
-    {
-      "id": "openai-0054",
-      "score": 0.9913
-    }
+  "drawers": [
+    "dharma",
+    "logos"
   ],
+  "confidence": 7.0,
+  "alignment_flag": true,
+  "statement_type": "question",
   "relations": [
     {
       "target": "openai-0148",
@@ -1641,7 +1619,6 @@
   "relation_meta": {
     "K_used": 3,
     "passes": 1,
-    "avg_score": 0.7539
-  },
-  "field_id": "F-006"
+    "avg_score": 0.754
+  }
 }

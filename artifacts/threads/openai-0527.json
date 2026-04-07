@@ -2481,13 +2481,6 @@
   ],
   "approx_tokens": 113155,
   "source": "openai",
-  "drawers": [
-    "dharma",
-    "logos"
-  ],
-  "alignment_flag": true,
-  "confidence": 6.0,
-  "statement_type": "question",
   "drawer_weights": {
     "dharma": 6,
     "logos": 6,
@@ -2499,6 +2492,13 @@
     "mitakuye-oyasin": 0.0,
     "sumak-kawsay": 1.5
   },
+  "context_metrics": {
+    "mitakuye_score": 176,
+    "ayni_score": 88,
+    "mitakuye_norm": 0.038,
+    "ayni_norm": 0.019
+  },
+  "interpretation": "a structurally anchored directive, expressed through reflective articulation, with secondary influence from active system construction.",
   "drawer_weights_normalized": {
     "dharma": 0.3243,
     "logos": 0.3243,
@@ -2510,53 +2510,30 @@
     "mitakuye-oyasin": 0.0,
     "sumak-kawsay": 0.0811
   },
-  "context_metrics": {
-    "mitakuye_score": 176,
-    "ayni_score": 88,
-    "mitakuye_norm": 0.038,
-    "ayni_norm": 0.019
-  },
-  "interpretation": "a structurally anchored directive, expressed through reflective articulation, with secondary influence from active system construction.",
-  "related_artifacts": [
-    {
-      "id": "openai-0622",
-      "score": 0.9955
-    },
-    {
-      "id": "openai-0054",
-      "score": 0.9943
-    },
-    {
-      "id": "openai-0148",
-      "score": 0.9938
-    },
-    {
-      "id": "openai-0503",
-      "score": 0.9938
-    },
-    {
-      "id": "openai-0483",
-      "score": 0.9861
-    }
+  "drawers": [
+    "dharma",
+    "logos"
   ],
+  "confidence": 6.0,
+  "alignment_flag": true,
+  "statement_type": "question",
   "relations": [
+    {
+      "target": "openai-0273",
+      "score": 0.9978
+    },
+    {
+      "target": "openai-0003",
+      "score": 0.9972
+    },
     {
       "target": "openai-0622",
       "score": 0.9955
-    },
-    {
-      "target": "openai-0054",
-      "score": 0.9943
-    },
-    {
-      "target": "openai-0148",
-      "score": 0.9938
     }
   ],
   "relation_meta": {
     "K_used": 3,
     "passes": 1,
-    "avg_score": 0.7539
-  },
-  "field_id": "F-006"
+    "avg_score": 0.754
+  }
 }

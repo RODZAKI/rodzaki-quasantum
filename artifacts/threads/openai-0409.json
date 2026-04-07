@@ -3651,14 +3651,6 @@
   ],
   "approx_tokens": 330708,
   "source": "openai",
-  "drawers": [
-    "dharma",
-    "rta",
-    "ubuntu"
-  ],
-  "alignment_flag": true,
-  "confidence": 7.0,
-  "statement_type": "directive",
   "drawer_weights": {
     "dharma": 7,
     "logos": 0.0,
@@ -3670,6 +3662,13 @@
     "mitakuye-oyasin": 0.0,
     "sumak-kawsay": 2.5
   },
+  "context_metrics": {
+    "mitakuye_score": 406,
+    "ayni_score": 125,
+    "mitakuye_norm": 0.0233,
+    "ayni_norm": 0.0072
+  },
+  "interpretation": "a structurally anchored directive, expressed through active system construction, with secondary influence from collective framing.",
   "drawer_weights_normalized": {
     "dharma": 0.2979,
     "logos": 0.0,
@@ -3681,35 +3680,14 @@
     "mitakuye-oyasin": 0.0,
     "sumak-kawsay": 0.1064
   },
-  "context_metrics": {
-    "mitakuye_score": 406,
-    "ayni_score": 125,
-    "mitakuye_norm": 0.0233,
-    "ayni_norm": 0.0072
-  },
-  "interpretation": "a structurally anchored directive, expressed through active system construction, with secondary influence from collective framing.",
-  "related_artifacts": [
-    {
-      "id": "openai-0473",
-      "score": 0.7415
-    },
-    {
-      "id": "openai-0292",
-      "score": 0.7407
-    },
-    {
-      "id": "openai-0340",
-      "score": 0.7407
-    },
-    {
-      "id": "openai-0407",
-      "score": 0.7407
-    },
-    {
-      "id": "openai-0448",
-      "score": 0.7407
-    }
+  "drawers": [
+    "dharma",
+    "rta",
+    "ubuntu"
   ],
+  "confidence": 7.0,
+  "alignment_flag": true,
+  "statement_type": "directive",
   "relations": [
     {
       "target": "openai-0473",
@@ -3727,7 +3705,6 @@
   "relation_meta": {
     "K_used": 3,
     "passes": 1,
-    "avg_score": 0.7539
-  },
-  "field_id": "F-012"
+    "avg_score": 0.754
+  }
 }

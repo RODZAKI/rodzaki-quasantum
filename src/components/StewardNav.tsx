@@ -5,7 +5,7 @@ const links = [
   { href: "/proposals", label: "Proposals" },
   { href: "/supersede", label: "Supersede" },
   { href: "/classify", label: "Classify" },
-  { href: "/fields", label: "Fields" },
+  { href: "/q/fields", label: "Fields" },
 ];
 
 export default function StewardNav() {

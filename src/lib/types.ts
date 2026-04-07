@@ -78,6 +78,7 @@ export interface Artifact {
   resolving?: boolean | null;
   era?: string | null;
   interpretation?: string;
+  relations?: { target: string; score: number }[];
 }
 
 export interface ArtifactVersion {

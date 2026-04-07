@@ -74,6 +74,36 @@ export default function FieldDetail() {
           </div>
         </div>
 
+        <div className="flex gap-4 mb-4">
+          <button
+            onClick={() => setTab('artifacts')}
+            className={`text-sm ${tab === 'artifacts' ? 'text-white' : 'text-gray-400'}`}
+          >
+            Artifacts
+          </button>
+
+          <button
+            onClick={() => setTab('relations')}
+            className={`text-sm ${tab === 'relations' ? 'text-white' : 'text-gray-400'}`}
+          >
+            Relations
+          </button>
+        </div>
+
+        {tab === 'relations' && (
+          <div className="space-y-2">
+            {relations.length === 0 ? (
+              <div className="text-sm text-gray-400">No relations found.</div>
+            ) : (
+              relations.map((rel, i) => (
+                <div key={i} className="text-sm text-gray-300">
+                  {rel.from_artifact_id} → {rel.to_artifact_id}
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
         {tab === 'artifacts' && (
           <div>
             <div className="flex flex-wrap items-center gap-3 mb-6">
@@ -97,6 +127,7 @@ export default function FieldDetail() {
                 </button>
               )}
             </div>
+
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredArtifacts.map(a => <ArtifactCard key={a.id} artifact={a} />)}

@@ -1,3 +1,4 @@
+import NestedPathMismatchDebugger from "@/components/NestedPathMismatchDebugger";
 import { useEffect } from "react";
 import { testSupabase } from "./lib/api";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -25,7 +26,9 @@ import Supersede from "./pages/Supersede";
 import Observe from "./pages/Observe";
 import Lineage from "./pages/Lineage";
 import Fields from "./pages/Fields";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import Home from "./pages/Home";
+import ArtifactDetail from "./components/ArtifactDetail";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
@@ -46,21 +49,27 @@ function AppShell() {
       <TooltipProvider>
         <Sonner />
         <HashRouter>
+
+          {/* 🔥 DEBUGGER INJECTED HERE */}
+          <NestedPathMismatchDebugger />
+
           <Routes>
-            <Route path="/" element={<ThreadQueryHandler />} />
+            <Route path="/" element={<Home />} />
             <Route path="/master-index" element={<MasterIndex />} />
             <Route path="/threads" element={<Threads />} />
             <Route path="/thread/:id" element={<ThreadView />} />
-            <Route path="/classify" element={<Classify />} />
+            <Route path="/q/classify" element={<Classify />} />
             <Route path="/curate" element={<Curate />} />
             <Route path="/join" element={<Join />} />
             <Route path="/proposals" element={<ProposalReview />} />
             <Route path="/supersede" element={<Supersede />} />
             <Route path="/observe" element={<Observe />} />
             <Route path="/lineage" element={<Lineage />} />
-            <Route path="/fields" element={<Fields />} />
+            <Route path="/q/fields" element={<Fields />} />
+            <Route path="/q/artifact/:id" element={<ArtifactDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+
         </HashRouter>
       </TooltipProvider>
     </ThemeProvider>
