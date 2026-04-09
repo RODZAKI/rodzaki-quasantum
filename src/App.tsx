@@ -1,4 +1,3 @@
-import NestedPathMismatchDebugger from "@/components/NestedPathMismatchDebugger";
 import { useEffect } from "react";
 import { testSupabase } from "./lib/api";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -27,6 +26,8 @@ import Observe from "./pages/Observe";
 import Lineage from "./pages/Lineage";
 import Fields from "./pages/Fields";
 import Home from "./pages/Home";
+import MotifExtraction from "./pages/MotifExtraction";
+import FieldDetail from "./pages/FieldDetail";
 import ArtifactDetail from "./components/ArtifactDetail";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -50,11 +51,9 @@ function AppShell() {
         <Sonner />
         <HashRouter>
 
-          {/* 🔥 DEBUGGER INJECTED HERE */}
-          <NestedPathMismatchDebugger />
-
-          <Routes>
-            <Route path="/" element={<Home />} />
+<Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/master-index" element={<MasterIndex />} />
             <Route path="/threads" element={<Threads />} />
             <Route path="/thread/:id" element={<ThreadView />} />
@@ -66,6 +65,8 @@ function AppShell() {
             <Route path="/observe" element={<Observe />} />
             <Route path="/lineage" element={<Lineage />} />
             <Route path="/q/fields" element={<Fields />} />
+            <Route path="/q/fields/:id" element={<FieldDetail />} />
+            <Route path="/q/motifs" element={<MotifExtraction />} />
             <Route path="/q/artifact/:id" element={<ArtifactDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

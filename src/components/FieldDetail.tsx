@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import RelationGraph from './RelationGraph';
 import { useStore } from '../lib/store';
 import { getFieldById, getArtifactsByField, getConstraintsByField, getRelationsByField, getProposalsByField, getMembershipsByField } from '../lib/services';
 import ArtifactCard from './ArtifactCard';
@@ -74,32 +75,39 @@ export default function FieldDetail() {
           </div>
         </div>
 
-        <div className="flex gap-4 mb-4">
+        <div className="flex gap-2 mb-6 border-b border-slate-700">
           <button
             onClick={() => setTab('artifacts')}
-            className={`text-sm ${tab === 'artifacts' ? 'text-white' : 'text-gray-400'}`}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              tab === 'artifacts'
+                ? 'border-indigo-500 text-white'
+                : 'border-transparent text-slate-400 hover:text-white'
+            }`}
           >
             Artifacts
           </button>
 
           <button
             onClick={() => setTab('relations')}
-            className={`text-sm ${tab === 'relations' ? 'text-white' : 'text-gray-400'}`}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              tab === 'relations'
+                ? 'border-indigo-500 text-white'
+                : 'border-transparent text-slate-400 hover:text-white'
+            }`}
           >
             Relations
           </button>
         </div>
 
         {tab === 'relations' && (
-          <div className="space-y-2">
+          <div>
             {relations.length === 0 ? (
               <div className="text-sm text-gray-400">No relations found.</div>
             ) : (
-              relations.map((rel, i) => (
-                <div key={i} className="text-sm text-gray-300">
-                  {rel.from_artifact_id} → {rel.to_artifact_id}
-                </div>
-              ))
+              <RelationGraph
+                centerId={selectedFieldId || ''}
+                relations={relations}
+              />
             )}
           </div>
         )}

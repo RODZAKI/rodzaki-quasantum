@@ -146,6 +146,13 @@ export async function getConstraintsByField(fieldId: string) {
 /* ---------- RELATIONS ---------- */
 
 export async function getRelationsByField(fieldId: string) {
+  const isValidUUID = (id: string) =>
+    /^[0-9a-fA-F-]{36}$/.test(id)
+
+  if (!fieldId || !isValidUUID(fieldId)) {
+    return []
+  }
+
   const { data, error } = await supabase
     .from('relations')
     .select('*')

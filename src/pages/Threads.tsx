@@ -14,7 +14,7 @@ export default function Threads() {
         {data?.threads?.map((thread: any) => (
           <li key={thread.id}>
             <a
-              href={"https://rodzaki.github.io${thread.pdf}"}
+              href={`https://rodzaki.github.io${thread.pdf}`}
               target="_blank"
               rel="noreferrer"
             >

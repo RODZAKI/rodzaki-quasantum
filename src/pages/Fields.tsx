@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 // --- Types ---
 
@@ -208,6 +209,12 @@ export default function Fields() {
               {/* Expanded detail */}
               {isOpen && (
                 <div className="border-t border-border px-4 py-4 text-sm space-y-4">
+                  <div>
+                    <Link to={`/q/fields/${f.field_id}`} className="text-xs text-muted-foreground hover:underline">
+                      Open Field →
+                    </Link>
+                  </div>
+
                   {/* Members */}
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">

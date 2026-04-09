@@ -3,12 +3,11 @@ import { getArtifactsByField, getDrawers, getAssignmentsByArtifact, assignArtifa
 import { logSentinel } from "@/lib/sentinels";
 import type { Artifact, Drawer, ArtifactDrawerAssignment, DrawerId, RowClass } from "@/lib/types";
 
-const FIELD_ID = "7ac54512-7d16-4223-993b-bd848e1a8cf7";
 const ROW_COLORS: Record<string, string> = { Shiva: "border-indigo-500 bg-indigo-500/10", Spanda: "border-purple-500 bg-purple-500/10", Shakti: "border-rose-500 bg-rose-500/10" };
 const ROW_LABEL_COLORS: Record<string, string> = { Shiva: "text-indigo-400", Spanda: "text-purple-400", Shakti: "text-rose-400" };
 const ROW_CLASS_OPTIONS: RowClass[] = ["canonical", "developmental", "operational", "transitional"];
 
-export default function Classify() {
+export default function Classify({ fieldId }: { fieldId: string }) {
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
   const [drawers, setDrawers] = useState<Drawer[]>([]);
   const [selected, setSelected] = useState<Artifact | null>(null);
@@ -20,7 +19,7 @@ export default function Classify() {
   const [filter, setFilter] = useState<"all" | "unclassified" | "classified">("all");
 
   useEffect(() => {
-    getArtifactsByField(FIELD_ID).then(setArtifacts);
+    getArtifactsByField(fieldId).then(setArtifacts);
     getDrawers().then(d => setDrawers(d as Drawer[]));
   }, []);
 

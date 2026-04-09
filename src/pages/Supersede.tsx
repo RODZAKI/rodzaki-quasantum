@@ -22,7 +22,7 @@ const SUPERSEDE_CRITERIA = [
   "Replacement — existing artifact is no longer the best representative",
 ];
 
-export default function Supersede() {
+export default function Supersede({ fieldId }: { fieldId: string }) {
   const { user } = useAuth();
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,6 +40,7 @@ export default function Supersede() {
       .from("artifacts")
       .select("*")
       .eq("state", "LIVE")
+      .eq("field_id", fieldId)
       .order("title");
 
     if (!error && data) setArtifacts(data);

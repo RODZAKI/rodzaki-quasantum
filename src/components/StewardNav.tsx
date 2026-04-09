@@ -2,10 +2,8 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 const links = [
-  { href: "/proposals", label: "Proposals" },
-  { href: "/supersede", label: "Supersede" },
-  { href: "/classify", label: "Classify" },
   { href: "/q/fields", label: "Fields" },
+  { href: "/q/motifs", label: "Motifs" },
 ];
 
 export default function StewardNav() {

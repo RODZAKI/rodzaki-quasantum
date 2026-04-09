@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { getArtifactsByField, getVaultEntries, addVaultEntry, removeVaultEntry, updateVaultEntry } from '@/lib/services';
 import type { Artifact } from '@/lib/types';
 
-const FIELD_ID = '7ac54512-7d16-4223-993b-bd848e1a8cf7';
 
 const VAULT_SECTIONS = ['core', 'foundry', 'serial', 'essays', 'notes'] as const;
 type VaultSection = typeof VAULT_SECTIONS[number];
@@ -19,7 +18,7 @@ const DRAWER_SUGGESTIONS: Record<string, VaultSection> = {
   'sumak-kawsay': 'notes',
 };
 
-export default function Curate() {
+export default function Curate({ fieldId }: { fieldId: string }) {
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
   const [vaultEntries, setVaultEntries] = useState<any[]>([]);
   const [selected, setSelected] = useState<Artifact | null>(null);
@@ -33,7 +32,7 @@ export default function Curate() {
   const [filter, setFilter] = useState<'all' | 'curated' | 'uncurated'>('all');
 
   useEffect(() => {
-    getArtifactsByField(FIELD_ID).then(setArtifacts);
+    getArtifactsByField(fieldId).then(setArtifacts);
     getVaultEntries().then(setVaultEntries);
   }, []);
 

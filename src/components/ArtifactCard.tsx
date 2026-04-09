@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { supabase } from '../lib/supabase';
 import type { Artifact } from '../lib/types';
@@ -33,6 +34,7 @@ interface Props {
 }
 
 export default function ArtifactCard({ artifact, compact, onDeleted }: Props) {
+  const navigate = useNavigate()
   const { setView, currentUser } = useStore();
 
   const TypeIcon = typeIcons[artifact.type] || FileText;
@@ -62,7 +64,14 @@ export default function ArtifactCard({ artifact, compact, onDeleted }: Props) {
 
   return (
     <div
-      onClick={() => setView('artifact-detail', artifact.field_id, artifact.id)}
+      onClick={() => {
+        if (!artifact?.id || artifact.id === "UNASSIGNED") {
+          console.warn("Invalid artifact id:", artifact)
+          return
+        }
+        console.log("Navigating to:", artifact.id)
+        navigate(`/q/artifact/${artifact.id}`)
+      }}
       className={`group relative rounded-xl bg-slate-900/40 border border-slate-800/50 hover:border-indigo-500/30 cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/5 ${compact ? 'p-4' : 'p-5'}`}
     >
       <div className="flex items-start justify-between gap-3 mb-3">

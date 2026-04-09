@@ -4,15 +4,13 @@ export default function Home() {
       <h1 className="text-2xl font-bold mb-4">Quasantum</h1>
 
       <div className="space-y-2">
-        <a href="#/classify" className="block underline">
+        <a href="#/q/classify" className="block underline">
           Classify
         </a>
-        <a href="#/fields" className="block underline">
+        <a href="#/q/fields" className="block underline">
           Fields
         </a>
-        <a href="#/artifacts/openai-0001" className="block underline">
-          Sample Artifact
-        </a>
+        <span className="block text-gray-500">Sample Artifact</span>
       </div>
     </div>
   )

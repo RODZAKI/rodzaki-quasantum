@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import RelationGraph from "@/components/RelationGraph"
-
-type Relation = {
-  target: string
-  score: number
-}
+import { supabase } from "@/lib/supabase"
 
 type Artifact = {
   id: string
@@ -27,31 +22,27 @@ export default function ArtifactDetail() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!id) {
-      console.log("No ID in params")
-      return
+    const loadArtifact = async () => {
+      if (!id || id === "UNASSIGNED") return
+
+      console.log("Loading artifact from Supabase:", id)
+
+      const { data, error } = await supabase
+        .from("artifacts")
+        .select("*")
+        .eq("id", id)
+        .single()
+
+      if (error) {
+        console.error("Failed to load artifact:", error)
+        setError(error.message)
+        return
+      }
+
+      setArtifact(data)
     }
 
-    const url = `https://rodzaki.github.io/artifacts/working/${id}.json`
-
-    console.log("Fetching artifact from:", url)
-
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`)
-        }
-        return res.json()
-      })
-      .then((data) => {
-        console.log("ARTIFACT LOADED:", data)
-        console.log("RELATIONS:", data)
-        setArtifact(data)
-      })
-      .catch((err) => {
-        console.error("Failed to load artifact:", err)
-        setError(err.message)
-      })
+    loadArtifact()
   }, [id])
 
   const getRole = (m: any) => m.role || m.author?.role || "message"
@@ -96,6 +87,11 @@ export default function ArtifactDetail() {
     return <div>No content available</div>
   }
 
+  if (!id || id === "UNASSIGNED") {
+    console.error("Invalid artifact ID:", id)
+    return <div className="p-4 text-red-400">Invalid artifact ID</div>
+  }
+
   if (error) {
     return (
       <div className="p-4 text-red-400">
@@ -128,12 +124,6 @@ export default function ArtifactDetail() {
         {renderContent()}
       </div>
 
-      {artifact?.relations && artifact.relations.length > 0 && (
-        <RelationGraph
-          centerId={artifact.id}
-          relations={artifact.relations as any}
-        />
-      )}
     </div>
   )
 }
