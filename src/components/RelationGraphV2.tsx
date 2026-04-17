@@ -53,7 +53,7 @@ export default function RelationGraphV2({ centerId, relations, onSelectNode }: P
   const lineMapRef = useRef<Map<string, SVGLineElement>>(new Map())
 
   // Selected node tracking (imperative — no React state to avoid D3 re-init)
-  const selectedNodeRef = useRef<string | null>(null)
+  const selectedNodesRef = useRef<Set<string>>(new Set())
 
   // Stable callback refs
   const expandGraphRef = useRef<(id: string) => void>(() => {})
@@ -128,20 +128,20 @@ export default function RelationGraphV2({ centerId, relations, onSelectNode }: P
 
     circle.addEventListener("click", (e) => {
       e.stopPropagation()
-      // Deselect previous node
-      const prev = selectedNodeRef.current
-      if (prev && prev !== node.id) {
-        const prevCircle = circleMapRef.current.get(prev)
-        if (prevCircle) {
-          const prevNode = nodeMapRef.current.get(prev)
-          prevCircle.setAttribute("fill", NODE_COLORS[(prevNode?.group ?? 3) - 1] || "#aaa")
-        }
+      const selected = selectedNodesRef.current
+      if (selected.has(node.id)) {
+        selected.delete(node.id)
+        const n = nodeMapRef.current.get(node.id)
+        circle.setAttribute("fill", NODE_COLORS[(n?.group ?? 3) - 1] || "#aaa")
+      } else {
+        selected.add(node.id)
+        circle.setAttribute("fill", "#22c55e")
       }
-      // Select this node
-      selectedNodeRef.current = node.id
-      circle.setAttribute("fill", "#22c55e")
       expandGraphRef.current(node.id)
       onSelectNodeRef.current(node.id)
+      if (simulationRef.current) {
+        simulationRef.current.alpha(0.3).restart()
+      }
     })
 
     circle.addEventListener("dblclick", (e) => {
