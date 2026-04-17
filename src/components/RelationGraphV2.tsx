@@ -1,6 +1,7 @@
-import { useEffect, useRef, useCallback } from "react"
+import { useEffect, useRef, useCallback, useState } from "react"
 import * as d3 from "d3-force"
 import { supabase } from "@/integrations/supabase/client"
+import { getCorpusThreads } from "@/lib/services"
 
 type Relation = {
   from_artifact_id: string
@@ -32,6 +33,7 @@ const NODE_COLORS = ["#60a5fa", "#34d399", "#94a3b8"]
 
 export default function RelationGraphV2({ centerId, relations, onSelectNode }: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
+  const [corpusNodes, setCorpusNodes] = useState<any[]>([])
   const groupRef = useRef<SVGGElement | null>(null)
 
   // Persistent simulation — never replaced after init
@@ -56,6 +58,10 @@ export default function RelationGraphV2({ centerId, relations, onSelectNode }: P
   // Stable callback refs
   const expandGraphRef = useRef<(id: string) => void>(() => {})
   const onSelectNodeRef = useRef<(id: string) => void>(() => {})
+
+  useEffect(() => {
+    getCorpusThreads().then(setCorpusNodes)
+  }, [])
 
   useEffect(() => {
     centerIdRef.current = centerId
@@ -164,7 +170,7 @@ export default function RelationGraphV2({ centerId, relations, onSelectNode }: P
   // Core incremental merge: add new nodes/edges without touching existing ones
   const mergeIncoming = useCallback((incoming: Relation[]) => {
     if (!simulationRef.current) return
-    if (nodeMapRef.current.size > 150) {
+    if (nodeMapRef.current.size > 500) {
       console.warn("Graph size limit reached — expansion halted")
       return
     }
@@ -362,6 +368,38 @@ export default function RelationGraphV2({ centerId, relations, onSelectNode }: P
       simulationRef.current.alpha(0.3).restart()
     }
   }, [centerId, appendCircle])
+
+  // PRE-SEED ALL CORPUS NODES into the graph (runs after centerId reset)
+  useEffect(() => {
+    if (!corpusNodes.length || !simulationRef.current) return
+    let changed = false
+    corpusNodes.forEach((thread) => {
+      if (!nodeMapRef.current.has(thread.id)) {
+        const node: NodeDatum = {
+          id: thread.id,
+          group: 3,
+          x: W / 2 + (Math.random() - 0.5) * 600,
+          y: H / 2 + (Math.random() - 0.5) * 400,
+        }
+        nodeMapRef.current.set(thread.id, node)
+        appendCircle(node)
+        changed = true
+      }
+    })
+    if (!changed) return
+    const allNodes = Array.from(nodeMapRef.current.values())
+    // Ensure centerId keeps group 1
+    for (const node of allNodes) {
+      if (node.id === centerId) node.group = 1
+    }
+    simulationRef.current.nodes(allNodes)
+    const linkForce = simulationRef.current.force("link") as d3.ForceLink<NodeDatum, LinkDatum> | null
+    linkForce?.links(Array.from(edgeSetRef.current).map(key => {
+      const [from, to] = key.split("|")
+      return { source: from, target: to }
+    }))
+    simulationRef.current.alpha(0.3).restart()
+  }, [corpusNodes, centerId, appendCircle])
 
   // Merge incoming relations prop
   useEffect(() => {
