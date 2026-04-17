@@ -73,6 +73,19 @@ export async function getPublicArtifacts(): Promise<Artifact[]> {
   return data as Artifact[];
 }
 
+export async function getCorpusThreads() {
+  const { data, error } = await supabase
+    .from("corpus_threads")
+    .select("*");
+
+  if (error) {
+    console.error("Error fetching corpus_threads:", error);
+    throw error;
+  }
+
+  return data;
+}
+
 export async function createArtifact(
   artifact: Omit<Artifact, 'id' | 'created_at' | 'updated_at'>
 ): Promise<Artifact> {
@@ -134,6 +147,11 @@ export async function createVersion(version: {
 /* ---------- CONSTRAINTS ---------- */
 
 export async function getConstraintsByField(fieldId: string) {
+  const isValidUUID = (id: string) => /^[0-9a-fA-F-]{36}$/.test(id);
+  if (!fieldId || fieldId === "UNASSIGNED" || !isValidUUID(fieldId)) {
+    return [];
+  }
+
   const { data, error } = await supabase
     .from('constraints')
     .select('*')
@@ -384,4 +402,29 @@ export async function getVaultEntryByArtifact(artifactId: string) {
 
   if (error) throw error;
   return data;
+}
+
+export async function createProposal(input: {
+  field_id: string
+  proposal_type: string
+  target_id?: string | null
+  payload?: any
+}) {
+  const { data, error } = await supabase
+    .from("artifact_proposals")
+    .insert([input])
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function getProposals(fieldId: string) {
+  const { data, error } = await supabase
+    .from("artifact_proposals")
+    .select("*")
+    .eq("field_id", fieldId)
+    .order("created_at", { ascending: false })
+  if (error) throw error
+  return data
 }
