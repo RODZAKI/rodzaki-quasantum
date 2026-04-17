@@ -1,9 +1,5 @@
+import { Navigate } from 'react-router-dom';
 
-import React from 'react';
-import AppLayout from '@/components/AppLayout';
-import { createArtifact } from "@/lib/services";
-const Index: React.FC = () => {
-  return <AppLayout />;
-};
-
-export default Index;
+export default function Index() {
+  return <Navigate to="/home" replace />;
+}

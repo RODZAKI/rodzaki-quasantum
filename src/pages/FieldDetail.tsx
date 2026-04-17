@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom"
 import Classify from "./Classify"
 import Curate from "./Curate"
 import Supersede from "./Supersede"
+import { createProposal, getProposals } from "../lib/services"
 
 type FieldRole = {
   role: "SOURCE" | "SINK" | "BRIDGE" | "ISOLATED"
@@ -30,6 +31,68 @@ async function fetchJson<T>(path: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
+function ProposalsTab({ fieldId }: { fieldId: string }) {
+  const [proposals, setProposals] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+
+  async function load() {
+    setLoading(true)
+    try {
+      const data = await getProposals(fieldId)
+      setProposals(data ?? [])
+    } catch (e) {
+      console.error("Proposals load error:", e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { void load() }, [fieldId])
+
+  async function handleCreate() {
+    setSubmitting(true)
+    try {
+      await createProposal({ field_id: fieldId, proposal_type: "TEST" })
+      await load()
+    } catch (e) {
+      console.error("Proposal create error:", e)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <button
+        onClick={handleCreate}
+        disabled={submitting}
+        className="px-4 py-2 text-sm border border-border rounded hover:bg-muted transition-colors disabled:opacity-50"
+      >
+        {submitting ? "Creating…" : "Create Test Proposal"}
+      </button>
+      {loading ? (
+        <p className="text-sm text-muted-foreground">Loading proposals…</p>
+      ) : proposals.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No proposals yet.</p>
+      ) : (
+        <div className="space-y-2">
+          {proposals.map(p => (
+            <div key={p.id} className="border border-border rounded px-4 py-3 text-sm">
+              <span className="font-mono text-xs text-muted-foreground">{p.id.slice(0, 8)}…</span>
+              <span className="ml-3">{p.proposal_type}</span>
+              <span className="ml-3 text-muted-foreground">{new Date(p.created_at).toLocaleString()}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+const isValidUUID = (s: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
+
 export default function FieldDetail() {
   const { id } = useParams<{ id: string }>()
   const [field, setField] = useState<FieldRecord | null>(null)
@@ -38,7 +101,8 @@ export default function FieldDetail() {
   const [tab, setTab] = useState<Tab>("classify")
 
   useEffect(() => {
-    if (!id) return
+    if (!id || !isValidUUID(id)) return
+    const fieldId = id
 
     async function load() {
       try {
@@ -48,18 +112,18 @@ export default function FieldDetail() {
           fetchJson<Record<string, FieldRole>>("field_roles.json"),
         ])
 
-        const entry = indexData.find(f => f.field_id === id)
+        const entry = indexData.find(f => f.field_id === fieldId)
         if (!entry) {
-          setError(`Field ${id} not found`)
+          setError(`Field ${fieldId} not found`)
           return
         }
 
         const centralityMap = new Map(centralityData.map(c => [c.field_id, c.score]))
-        const roleEntry = rolesData[id] ?? { role: "ISOLATED" as const, in_degree: 0, out_degree: 0 }
+        const roleEntry = rolesData[fieldId] ?? { role: "ISOLATED" as const, in_degree: 0, out_degree: 0 }
 
         setField({
           ...entry,
-          score: centralityMap.get(id) ?? 0.15,
+          score: centralityMap.get(fieldId) ?? 0.15,
           role: roleEntry.role,
           in_degree: roleEntry.in_degree,
           out_degree: roleEntry.out_degree,
@@ -120,11 +184,7 @@ export default function FieldDetail() {
       {tab === "classify" && <Classify fieldId={id} />}
       {tab === "curate" && <Curate fieldId={id} />}
       {tab === "supersede" && <Supersede fieldId={id} />}
-      {tab === "proposals" && (
-        <div className="text-sm text-muted-foreground py-8 text-center">
-          Artifact proposals for this field — coming soon.
-        </div>
-      )}
+      {tab === "proposals" && id && <ProposalsTab fieldId={id} />}
     </div>
   )
 }

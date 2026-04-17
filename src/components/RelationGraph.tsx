@@ -10,6 +10,7 @@ type Relation = {
 type Props = {
   centerId: string
   relations: Relation[]
+  onSelectNode?: (nodeId: string) => void
 }
 
 type NodeDatum = d3.SimulationNodeDatum & {
@@ -28,10 +29,11 @@ const W = 800
 const H = 500
 const PAD = 20
 
-export default function RelationGraph({ centerId, relations }: Props) {
+export default function RelationGraph({ centerId, relations, onSelectNode }: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
   const simulationRef = useRef<d3.Simulation<NodeDatum, LinkDatum> | null>(null)
   const expandGraphRef = useRef<(id: string) => void>(() => {})
+  const onSelectNodeRef = useRef<(id: string) => void>(() => {})
 
   const [graphNodes, setGraphNodes] = useState<Set<string>>(new Set())
   const [graphEdges, setGraphEdges] = useState<Set<string>>(new Set())
@@ -80,6 +82,10 @@ export default function RelationGraph({ centerId, relations }: Props) {
   useEffect(() => {
     expandGraphRef.current = expandGraph
   }, [expandGraph])
+
+  useEffect(() => {
+    onSelectNodeRef.current = onSelectNode ?? (() => {})
+  }, [onSelectNode])
 
   // Reset graph when centerId changes
   useEffect(() => {
@@ -159,6 +165,7 @@ export default function RelationGraph({ centerId, relations }: Props) {
       circle.addEventListener("click", (e) => {
         e.stopPropagation()
         expandGraphRef.current(node.id)
+        onSelectNodeRef.current(node.id)
       })
 
       circle.addEventListener("dblclick", (e) => {

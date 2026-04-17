@@ -3,7 +3,6 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const links = [
   { href: "/q/fields", label: "Fields" },
-  { href: "/q/motifs", label: "Motifs" },
 ];
 
 export default function StewardNav() {

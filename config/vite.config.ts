@@ -7,10 +7,13 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(__dirname, '../src'),
     },
   },
   build: {
     cssMinify: false,
+  },
+  css: {
+    postcss: path.resolve(__dirname, './postcss.config.js'),
   },
 })

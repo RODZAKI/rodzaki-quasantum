@@ -232,32 +232,6 @@ export default function MotifExtractionPage() {
       )
     : null;
 
-  const getClassificationColor = (classification: 'emergence_candidate' | 'fragmentation' | 'shift'): string => {
-    switch (classification) {
-      case 'emergence_candidate':
-        return 'bg-blue-900/40 text-blue-300 border-blue-700';
-      case 'fragmentation':
-        return 'bg-red-900/40 text-red-300 border-red-700';
-      case 'shift':
-        return 'bg-yellow-900/40 text-yellow-300 border-yellow-700';
-      default:
-        return 'bg-gray-900/40 text-gray-300 border-gray-700';
-    }
-  };
-
-  const getClassificationLabel = (classification: 'emergence_candidate' | 'fragmentation' | 'shift'): string => {
-    switch (classification) {
-      case 'emergence_candidate':
-        return 'Emergence Candidate';
-      case 'fragmentation':
-        return 'Fragmentation';
-      case 'shift':
-        return 'Shift';
-      default:
-        return classification;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 p-6">
       <div className="max-w-3xl mx-auto">

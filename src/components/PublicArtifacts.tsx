@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useStore } from '../lib/store';
-import { getPublicArtifacts, getFields } from '../lib/services';
+import { getCorpusThreads, getFields } from '../lib/services';
 import ArtifactCard from './ArtifactCard';
 import { Globe } from 'lucide-react';
 
@@ -8,9 +8,12 @@ export default function PublicArtifacts() {
   const { artifacts, fields, setArtifacts, setFields } = useStore();
 
   useEffect(() => {
-    getPublicArtifacts()
-      .then(setArtifacts)
-      .catch(err => console.error('PUBLIC ARTIFACT LOAD ERROR:', err));
+    async function load() {
+      const data = await getCorpusThreads();
+      setArtifacts(data);
+      console.log("CORPUS THREADS:", data.length, data[0]);
+    }
+    load();
 
     if (fields.length === 0) {
       getFields()
@@ -19,7 +22,7 @@ export default function PublicArtifacts() {
     }
   }, []);
 
-  const publicArtifacts = artifacts.slice(0, 6);
+  const publicArtifacts = artifacts;
 
   if (publicArtifacts.length === 0) return null;
 
@@ -35,6 +38,12 @@ export default function PublicArtifacts() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {publicArtifacts.map(artifact => (
+            <div key={artifact.id}>
+              {artifact.title || artifact.id}
+            </div>
+          ))}
+          {/* DIAGNOSTIC — original map commented out:
           {publicArtifacts.map(a => {
             const field = fields.find(f => f.id === a.field_id);
             return (
@@ -55,6 +64,7 @@ export default function PublicArtifacts() {
               </div>
             );
           })}
+          */}
         </div>
       </div>
     </section>
